@@ -35,22 +35,17 @@ pipeline {
             }
         }
 
-        stage('Docker Login') {
-            steps {
-                bat """
-                    echo %DOCKERHUB_PASS% | docker login -u %DOCKERHUB_USER% --password-stdin
-                """
-            }
+       stage('Docker Login & Push') {
+    steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+            bat """
+                echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
+                docker tag %DOCKER_IMAGE% %DOCKER_USER%/%DOCKER_IMAGE%
+                docker push %DOCKER_USER%/%DOCKER_IMAGE%
+            """
         }
-
-        stage('Push Docker Image') {
-            steps {
-                bat """
-                    docker tag %DOCKER_IMAGE% %DOCKERHUB_USER%/%DOCKER_IMAGE%
-                    docker push %DOCKERHUB_USER%/%DOCKER_IMAGE%
-                """
-            }
-        }
+    }
+}
 
         stage('Deploy to EC2') {
             steps {
@@ -65,4 +60,5 @@ pipeline {
         }
     }
 }
+
 

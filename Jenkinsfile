@@ -9,6 +9,7 @@ pipeline {
         EC2_HOST     = "3.109.3.44"
         EC2_KEY      = "C:\\jenkin_key\\aws.pem"
         MAVEN_HOME   = "Maven3"
+        APP_PORT     = "9090"                  // New port for Spring Boot app
     }
 
     stages {
@@ -59,19 +60,16 @@ pipeline {
                 bat """
                     ssh -o StrictHostKeyChecking=no -i "%EC2_KEY%" %EC2_USER%@%EC2_HOST% ^
                     "docker pull %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG% && ^
-             docker stop app || exit /b 0 && ^
-             docker rm app || exit /b 0 && ^
-             docker run -d --name app -p 8080:8080 %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%"
+                     docker stop app || exit /b 0 && ^
+                     docker rm app || exit /b 0 && ^
+                     docker run -d --name app -p %APP_PORT%:%APP_PORT% -e SERVER_PORT=%APP_PORT% %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%"
                 """
             }
         }
     }
-    
-    
 
     post {
         always {
-            // logout from Docker Hub after pipeline
             bat 'docker logout'
         }
     }

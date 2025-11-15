@@ -7,7 +7,7 @@ pipeline {
         DOCKER_USER  = "gj23aj2901"            // Docker Hub username
         EC2_USER     = "ec2-user"
         EC2_HOST     = "3.109.3.44"
-        EC2_KEY      = "C:\\Users\\Shefali\\OneDrive\\Desktop\\Aws_key\\aws.pem"
+        EC2_KEY      = "C:\\jenkin_key\\aws.pem"
         MAVEN_HOME   = "Maven3"
     }
 
@@ -59,13 +59,15 @@ pipeline {
                 bat """
                     ssh -o StrictHostKeyChecking=no -i "%EC2_KEY%" %EC2_USER%@%EC2_HOST% ^
                     "docker pull %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG% && ^
-                     docker stop app || true && ^
-                     docker rm app || true && ^
-                     docker run -d --name app -p 8080:8080 %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%"
+             docker stop app || exit /b 0 && ^
+             docker rm app || exit /b 0 && ^
+             docker run -d --name app -p 8080:8080 %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%"
                 """
             }
         }
     }
+    
+    
 
     post {
         always {

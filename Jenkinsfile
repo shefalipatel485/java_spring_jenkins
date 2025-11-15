@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "java_spring_jenkins:v1.2"
+         DOCKER_TAG = "v1.2"
         DOCKERHUB_USER = "gj23aj2901"
         EC2_USER = "ec2-user"
         EC2_HOST = "3.109.3.44"
@@ -44,8 +45,8 @@ stage('Build Docker Image') {
 
 stage('Push Docker Image') {
     steps {
-        bat 'docker tag %DOCKER_IMAGE% %DOCKER_USER%/%DOCKER_IMAGE%'
-        bat 'docker push %DOCKER_USER%/%DOCKER_IMAGE%'
+        bat "docker tag %DOCKER_IMAGE%:%DOCKER_TAG% %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%"
+        bat "docker push %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%"
     }
 }
         stage('Deploy to EC2') {

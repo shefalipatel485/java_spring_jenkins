@@ -18,7 +18,6 @@ pipeline {
             }
         }
 
-        
        stage('Build with Maven') {
     steps {
         withMaven(maven: 'Maven3') {
@@ -27,26 +26,28 @@ pipeline {
     }
 }
 
-        stage('Build Docker Image') {
-            steps {
-                bat """
-                    docker build -t %DOCKER_IMAGE% .
-                """
-            }
-        }
+       
 
-       stage('Docker Login & Push') {
+      stage('Docker Login') {
     steps {
         withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-            bat """
-                echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
-                docker tag %DOCKER_IMAGE% %DOCKER_USER%/%DOCKER_IMAGE%
-                docker push %DOCKER_USER%/%DOCKER_IMAGE%
-            """
+            bat 'echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin'
         }
     }
 }
 
+stage('Build Docker Image') {
+    steps {
+        bat 'docker build -t %DOCKER_IMAGE% .'
+    }
+}
+
+stage('Push Docker Image') {
+    steps {
+        bat 'docker tag %DOCKER_IMAGE% %DOCKER_USER%/%DOCKER_IMAGE%'
+        bat 'docker push %DOCKER_USER%/%DOCKER_IMAGE%'
+    }
+}
         stage('Deploy to EC2') {
             steps {
                 bat """
@@ -60,5 +61,3 @@ pipeline {
         }
     }
 }
-
-

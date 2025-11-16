@@ -55,18 +55,18 @@ pipeline {
             }
         }
 
-      stage('Deploy to EC2') {
-    steps {
-        withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh', keyFileVariable: 'SSH_KEY')]) {
-            bat """
-                ssh -o StrictHostKeyChecking=no -i "%SSH_KEY%" %EC2_USER%@%EC2_HOST% ^
-                "docker pull %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG% && ^
-                (docker stop app 2>nul || exit /b 0) && ^
-                (docker rm app 2>nul || exit /b 0) && ^
-                docker run -d --name app -p %APP_PORT%:%APP_PORT% -e SERVER_PORT=%APP_PORT% %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%"
-            """
-        }
-    }
+     withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh', keyFileVariable: 'SSH_KEY')]) {
+    bat """
+        echo Fixing key permissions...
+        icacls "%SSH_KEY%" /inheritance:r /grant:r "NT AUTHORITY\\SYSTEM:F"
+
+        echo Connecting to EC2...
+        ssh -o StrictHostKeyChecking=no -i "%SSH_KEY%" %EC2_USER%@%EC2_HOST% ^
+        "docker pull %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG% && ^
+        (docker stop app 2>nul || exit /b 0) && ^
+        (docker rm app 2>nul || exit /b 0) && ^
+        docker run -d --name app -p %APP_PORT%:%APP_PORT% -e SERVER_PORT=%APP_PORT% %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%"
+    """
 }
 
     }
@@ -77,6 +77,7 @@ pipeline {
         }
     }
 }
+
 
 
 

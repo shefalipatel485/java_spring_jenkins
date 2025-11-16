@@ -3,13 +3,14 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "java_spring_jenkins"   // local image name without tag
-        DOCKER_TAG   = "v1.3"                  // tag
+        DOCKER_TAG   = "v1.4"                  // tag
         DOCKER_USER  = "gj23aj2901"            // Docker Hub username
         EC2_USER     = "ec2-user"
         EC2_HOST     = "13.233.151.248"
         EC2_KEY      = "C:\\jenkin_key\\aws.pem"
         MAVEN_HOME   = "Maven3"
         APP_PORT     = "9090"                  // New port for Spring Boot app
+        APP_CONT_PORT="8080"
     }
 
     stages {
@@ -66,7 +67,7 @@ stage('Deploy to EC2') {
         "docker pull %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG% && ^
         (docker stop app 2>nul || exit /b 0) && ^
         (docker rm app 2>nul || exit /b 0) && ^
-        docker run -d --name app -p %APP_PORT%:%APP_PORT% -e SERVER_PORT=%APP_PORT% %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%"
+        docker run -d --name app -p %APP_PORT%:%APP_CONT_PORT% %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%"
     """
 }
     }
@@ -79,6 +80,7 @@ stage('Deploy to EC2') {
         }
     }
 }
+
 
 
 

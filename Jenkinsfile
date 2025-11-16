@@ -6,7 +6,7 @@ pipeline {
         DOCKER_TAG   = "v1.2"                  // tag
         DOCKER_USER  = "gj23aj2901"            // Docker Hub username
         EC2_USER     = "ec2-user"
-        EC2_HOST     = "3.109.3.44"
+        EC2_HOST     = "13.233.151.248"
         EC2_KEY      = "C:\\jenkin_key\\aws.pem"
         MAVEN_HOME   = "Maven3"
         APP_PORT     = "9090"                  // New port for Spring Boot app
@@ -74,6 +74,7 @@ pipeline {
         }
     }
 }
+
 
 
 

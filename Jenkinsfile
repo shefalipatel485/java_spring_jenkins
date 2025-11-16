@@ -54,7 +54,8 @@ pipeline {
                 }
             }
         }
-
+stage('Deploy to EC2') {
+    steps {
      withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh', keyFileVariable: 'SSH_KEY')]) {
     bat """
         echo Fixing key permissions...
@@ -68,7 +69,8 @@ pipeline {
         docker run -d --name app -p %APP_PORT%:%APP_PORT% -e SERVER_PORT=%APP_PORT% %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%"
     """
 }
-
+    }
+}
     }
 
     post {
@@ -77,6 +79,7 @@ pipeline {
         }
     }
 }
+
 
 
 

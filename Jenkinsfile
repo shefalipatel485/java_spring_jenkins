@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "java_spring_jenkins"   // local image name without tag
-        DOCKER_TAG   = "v1.2"                  // tag
+        DOCKER_TAG   = "v1.3"                  // tag
         DOCKER_USER  = "gj23aj2901"            // Docker Hub username
         EC2_USER     = "ec2-user"
         EC2_HOST     = "13.233.151.248"
@@ -79,6 +79,7 @@ stage('Deploy to EC2') {
         }
     }
 }
+
 
 
 

@@ -55,11 +55,11 @@ pipeline {
             }
         }
 
-       stage('Deploy to EC2') {
+      stage('Deploy to EC2') {
     steps {
-        sshagent(credentials: ['ec2-ssh']) {
+        withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh', keyFileVariable: 'SSH_KEY')]) {
             bat """
-                ssh -o StrictHostKeyChecking=no ec2-user@%EC2_HOST% ^
+                ssh -o StrictHostKeyChecking=no -i "%SSH_KEY%" %EC2_USER%@%EC2_HOST% ^
                 "docker pull %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG% && ^
                 (docker stop app 2>nul || exit /b 0) && ^
                 (docker rm app 2>nul || exit /b 0) && ^
@@ -77,6 +77,7 @@ pipeline {
         }
     }
 }
+
 
 
 

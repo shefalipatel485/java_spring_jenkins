@@ -63,10 +63,10 @@ stage('Deploy to EC2') {
         icacls "%SSH_KEY%" /inheritance:r /grant:r "NT AUTHORITY\\SYSTEM:F"
 
         echo Connecting to EC2...
-        ssh -o StrictHostKeyChecking=no -i "%SSH_KEY%" %EC2_USER%@%EC2_HOST% ^
-        "docker pull %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG% && ^
-        (docker stop app 2>nul || exit /b 0) && ^
-        (docker rm app 2>nul || exit /b 0) && ^
+        ssh -o StrictHostKeyChecking=no -i "%SSH_KEY%" %EC2_USER%@%EC2_HOST% \
+        "docker pull %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG% && \
+        (docker stop app 2>nul || exit /b 0) && \
+        (docker rm app 2>nul || exit /b 0) && \
         docker run -d --name app -p %APP_PORT%:%APP_CONT_PORT% %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%"
     """
 }
@@ -80,6 +80,7 @@ stage('Deploy to EC2') {
         }
     }
 }
+
 
 
 
